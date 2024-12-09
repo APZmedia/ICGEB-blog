@@ -1,0 +1,12 @@
+.doi-version-info {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.doi-version-info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
