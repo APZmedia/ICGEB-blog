@@ -1,7 +1,7 @@
 jQuery(document).ready(function ($) {
     // When a version switch button is clicked
     $('.switch-version').on('click', function () {
-        const version = $(this).data('version'); // Get the version from the button's data attribute
+        const version = $(this).data('version'); // Add this field in wp_localize_script
         const post_id = wp_data.post_id; // Retrieve the post ID from the WordPress data object
 
         // Make an AJAX request to fetch the selected version's content
@@ -10,7 +10,7 @@ jQuery(document).ready(function ($) {
             type: 'POST',
             data: {
                 action: 'fetch_version_content', // Action defined in PHP for fetching version content
-                security: wp_data.nonce, // Nonce for security
+                security: wp_data.fetch_nonce, // Nonce for security
                 post_id: post_id, // Current post ID
                 version: version, // The selected version to fetch
             },
@@ -32,3 +32,4 @@ jQuery(document).ready(function ($) {
         });
     });
 });
+

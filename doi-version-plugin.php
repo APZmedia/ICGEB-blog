@@ -20,6 +20,8 @@ class DOI_Version_Plugin {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('wp_ajax_fetch_version_content', array($this, 'fetch_version_content'));
         add_action('wp_ajax_nopriv_fetch_version_content', array($this, 'fetch_version_content'));
+        add_action('wp_ajax_delete_version', array($this, 'delete_version'));
+        add_action('wp_ajax_nopriv_delete_version', array($this, 'delete_version')); // Optional, if needed
     }
 
     public function register_post_meta() {
@@ -109,12 +111,16 @@ class DOI_Version_Plugin {
         if (is_single() && get_post_type() === 'post') {
             $post_id = get_the_ID();
             $doi = get_post_meta($post_id, 'doi', true);
-            $version = get_post_meta($post_id, 'version', true);
+            $current_version = get_post_meta($post_id, 'version', true); // Get the current version
+            $version_history = get_post_meta($post_id, 'version_history', true);
+
+            // Use the content of the current version
+            $current_content = isset($version_history[$current_version]) ? $version_history[$current_version] : get_the_content();
 
             $content = '<div class="doi-version-info">';
             $content .= '<p>DOI: ' . esc_html($doi) . '</p>';
-            $content .= '<p>Version: ' . esc_html($version) . '</p>';
-            $content .= '<div id="version-content">' . get_the_content() . '</div>';
+            $content .= '<p>Version: ' . esc_html($current_version) . '</p>';
+            $content .= '<div id="version-content">' . wp_kses_post($current_content) . '</div>';
             $content .= $this->get_version_switcher_html($post_id);
             $content .= '</div>';
         }
@@ -126,7 +132,9 @@ class DOI_Version_Plugin {
         $version_history = get_post_meta($post_id, 'version_history', true);
         $html = '<div class="version-switcher">';
         foreach ($version_history as $version => $content) {
-            $html .= '<button class="switch-version" data-version="' . esc_attr($version) . '">' . esc_html($version) . '</button>';
+            $html .= '<div class="version-item">';
+            $html .= '<button class="switch-version" data-version="' . esc_attr($version) . '">' . esc_html($version) . '</button>';     
+            $html .= '</div>';        
         }
         $html .= '</div>';
         return $html;
@@ -164,8 +172,9 @@ class DOI_Version_Plugin {
 
             wp_localize_script('version-switcher-js', 'wp_data', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('fetch_version_nonce'),
+                'fetch_nonce' => wp_create_nonce('fetch_version_nonce'),
                 'post_id' => get_the_ID(),
+                'current_version' => get_post_meta(get_the_ID(), 'version', true), // Add the current version
             ));
         }
     }
