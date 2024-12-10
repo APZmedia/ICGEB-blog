@@ -1,35 +1,43 @@
 jQuery(document).ready(function ($) {
-    // When a version switch button is clicked
-    $('.switch-version').on('click', function () {
-        const version = $(this).data('version'); // Add this field in wp_localize_script
-        const post_id = wp_data.post_id; // Retrieve the post ID from the WordPress data object
+    $('.version-item').on('click', function (e) {
+        e.preventDefault(); // Prevent the default link behavior
 
-        // Make an AJAX request to fetch the selected version's content
+        const url = $(this).attr('href');
+        const version = url.split('/').pop(); // Extract the version from the URL
+
+        console.log('Selected URL:', url); // Debug the URL
+        console.log('Selected Version:', version); // Debug the version
+
+        // Update the browser's URL
+        window.history.pushState({}, '', url);
+
+        // Make an AJAX request to fetch the content for the selected version
         $.ajax({
-            url: wp_data.ajaxurl, // The AJAX endpoint provided by WordPress
+            url: wp_data.ajaxurl,
             type: 'POST',
             data: {
-                action: 'fetch_version_content', // Action defined in PHP for fetching version content
-                security: wp_data.fetch_nonce, // Nonce for security
-                post_id: post_id, // Current post ID
-                version: version, // The selected version to fetch
+                action: 'fetch_version_content',
+                version: version,
+                post_id: wp_data.post_id,
+                security: wp_data.fetch_nonce,
             },
             success: function (response) {
                 if (response.success) {
-                    // Update the page with the fetched version content
-                    $('#version-content').html(response.data.content);
-                    // Update the displayed version
-                    $('.doi-version-info p:contains("Version:")').text('Version: ' + response.data.version);
+                    $('#version-content').html(response.data.content); // Update the content
                 } else {
-                    // Handle error case
-                    alert('Error: ' + response.data.message || 'Could not fetch version.');
+                    alert('Error: ' + response.data.message);
                 }
             },
-            error: function () {
-                // Handle general AJAX error
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error('AJAX Error:', textStatus, errorThrown); // Debug the error
                 alert('An unexpected error occurred. Please try again later.');
             },
         });
     });
 });
 
+jQuery(document).ready(function($) {
+    $('#version-toggle').on('click', function() {
+        $('#version-list').toggle();
+    });
+});
