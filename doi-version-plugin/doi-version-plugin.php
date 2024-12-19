@@ -89,8 +89,8 @@ class DOI_Version_Plugin {
         $display_version = isset($version_history[$requested_version]) ? $requested_version : $current_version;
 
         $info = '<div class="doi-version-info">';
-        $info .= '<p>DOI: ' . esc_html($doi) . '</p>';
-        $info .= '<p>Version: <span id="current-version">' . esc_html($display_version) . '</span></p>';
+        $info .= '<p style="display: none;">DOI: ' . esc_html($doi) . '</p>';
+        $info .= '<p style="display: none;">Version: <span id="current-version">' . esc_html($display_version) . '</span></p>';
         $info .= $this->get_version_dropdown_html($post_id, $version_history);
         $info .= '</div>';
 
@@ -101,7 +101,7 @@ class DOI_Version_Plugin {
 
     private function get_version_dropdown_html($post_id, $version_history) {
         $html = '<div class="version-dropdown">';
-        $html .= '<button id="version-toggle">View Versions</button>';
+        $html .= '<button id="version-toggle" style="display: none;">View Versions</button>';
         $html .= '<div id="version-list" style="display: none;">';
 
         foreach (array_keys($version_history) as $version) {
@@ -126,7 +126,6 @@ class DOI_Version_Plugin {
                 'current_version' => get_post_meta(get_the_ID(), 'version', true),
                 'nonce' => wp_create_nonce('fetch_version_nonce'),
             ));
-            wp_enqueue_style('doi-version-style', plugin_dir_url(__FILE__) . 'version-dropdown.css', array(), '1.3');
         }
     }
 
@@ -159,7 +158,7 @@ class DOI_Version_Plugin {
         check_ajax_referer('fetch_version_nonce', 'nonce');
 
         $post_id = intval($_POST['post_id']);
-        $version = sanitize_text_field($_POST['version']);
+        $version = ltrim(sanitize_text_field($_POST['version']), 'v'); // Normalize the version
         $version_history = get_post_meta($post_id, 'version_history', true);
 
         if (isset($version_history[$version])) {

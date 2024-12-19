@@ -1,0 +1,35 @@
+/* Ensure menu items are displayed inline */
+.menu-item {
+    display: inline-block;
+}
+
+/* Override any default WordPress styles that might interfere */
+#primary-menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#primary-menu li {
+    margin-right: 2rem;
+}
+
+#primary-menu li:last-child {
+    margin-right: 0;
+}
+
+.prose {
+    max-width: none;
+}
+
+.prose p {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.prose p:first-of-type {
+    margin-top: 0;
+}

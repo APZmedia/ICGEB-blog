@@ -49,7 +49,8 @@ jQuery(document).ready(function($) {
     $('.version-item').on('click', function(e) {
         e.preventDefault();
         const version = $(this).data('version');
-        fetchVersionContent(version);
+        fetchVersionContent(version.replace(/^v/, '')); // Remove 'v' prefix if it exists
+
     });
 
     $versionToggle.on('click', function() {
@@ -61,7 +62,8 @@ jQuery(document).ready(function($) {
         const versionIndex = pathParts.indexOf('release');
         if (versionIndex !== -1 && pathParts[versionIndex + 1]) {
             const version = pathParts[versionIndex + 1];
-            fetchVersionContent(version);
+            fetchVersionContent(version.replace(/^v/, '')); // Remove 'v' prefix if it exists
+
         } else {
             // If no version in URL, fetch the latest version
             fetchVersionContent(wp_data.current_version);
