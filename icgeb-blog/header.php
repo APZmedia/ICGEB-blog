@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-NLTD79WT');
+    </script>
+    <!-- End Google Tag Manager -->
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php wp_title('|', true, 'right'); ?><?php bloginfo('name'); ?></title> 
@@ -17,19 +26,31 @@
         <?php endif; ?>">
 
         <div class="container mx-auto px-4 flex flex-col h-full relative">
-            <!-- Title: Reduce size on inner pages -->
-            <h1 class="text-white font-bold text-left transition-all 
-                <?php if (is_front_page() || is_home()) : ?>
-                    text-4xl md:text-5xl lg:text-6xl pt-8 pb-8 md:pb-16
-                <?php else : ?>
-                    text-2xl md:text-3xl lg:text-4xl pt-4 pb-4 md:pb-8
-                <?php endif; ?>">
-                Monitoring Gene Drives
-            </h1>
+            <!-- Title and Logo -->
+            <div class="flex items-center space-x-4">
+                <img 
+                    src="<?php echo esc_url(get_template_directory_uri() . '/monitoring_gen_drive_research._vactor_file_for_web2.png'); ?>" 
+                    alt="Monitoring Gene Drive Research Logo" 
+                    class="object-cover
+                    <?php if (is_front_page() || is_home()) : ?> 
+                        h-[100px] w-[100px] md:h-[250px] md:w-[250px]
+                    <?php else : ?>
+                        h-[100px] h-[100px]
+                    <?php endif; ?>"
+                />
+                <h1 class="text-white font-bold text-left transition-all 
+                    <?php if (is_front_page() || is_home()) : ?>
+                        text-4xl md:text-5xl lg:text-6xl pt-8 pb-8 md:pb-16
+                    <?php else : ?>
+                        text-2xl md:text-3xl lg:text-4xl pt-4 pb-4 md:pb-8
+                    <?php endif; ?>">
+                    Monitoring Gene Drives
+                </h1>
+            </div>
 
             <!-- Mobile Navbar Toggle Button -->
             <button id="mobileNavToggle" 
-                class="absolute top-4 right-4 bg-white text-icgeb-blue p-2 rounded-md shadow-md focus:outline-none z-50 md:hidden"
+                class="absolute top-[5px] right-[5px] bg-white text-icgeb-blue p-2 rounded-md shadow-md focus:outline-none z-50 md:hidden"
                 aria-label="Toggle Navigation">
                 <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -54,7 +75,6 @@
             </nav>
         </div>
     </header>
-
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>

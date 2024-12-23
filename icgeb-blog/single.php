@@ -55,7 +55,7 @@ get_header();
                                 ?>
                             </div>
 
-                            <h1 class="text-2xl lg:text-4xl font-extrabold mb-4">
+                            <h1 class="text-2xl lg:text-4xl mb-4">
                                 <?php the_title(); ?>
                             </h1>
                             
@@ -162,7 +162,7 @@ get_header();
 
                 <div id="detailsPanel" class="hidden mt-8">
                     <div class="flex justify-between items-start mb-6">
-                        <h2 class="text-xl md:text-2xl font-bold"><?php the_title(); ?></h2>
+                        <h2 class="text-xl md:text-2xl"><?php the_title(); ?></h2>
                         <button id="hideDetailsBtn" class="flex items-center gap-2 hover:bg-white/10 px-4 py-2 rounded transition-colors">
                             <span>HIDE DETAILS</span>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,7 +222,7 @@ get_header();
     <div class="bg-white text-gray-800 py-8">
         <div class="container mx-auto px-4 lg:w-full">
             <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-                <article id="version-content" class="prose max-w-none text-justify text-gray-700 text-md md:text-xl leading-relaxed content-area">
+                <article id="version-content" class="content-area content-heading content-paragraph content-list content-links">
                     <?php
                     $post_id = get_the_ID();
                     $current_version = get_current_version($post_id);
@@ -241,26 +241,91 @@ get_header();
 </main>
 
 <style>
-    .content-area a {
-        color: #2563eb !important;
-        text-decoration: underline !important; 
-    }
+/* General Gutenberg Block Styling */
+.content-area {
+    margin-bottom: 1.5rem;
+}
 
-    .content-area ul {
-        list-style-type: disc; 
-        margin-left: 1.5rem; 
-        margin-bottom: 1rem;
-    }
+/* Headings */
+.content-heading h1,
+h1 {
+    font-size: 2.25rem;
+    font-weight: 800; 
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
 
-    .content-area ol {
-        list-style-type: decimal; 
-        margin-left: 1.5rem;
-        margin-bottom: 1rem; 
-    }
+.content-heading h2,
+h2 {
+    font-size: 1.875rem;
+    font-weight: 700; 
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
 
-    .content-area li {
-        margin-bottom: 0.5rem; 
-    }   
+.content-heading h3,
+h3 {
+    font-size: 1.5rem;
+    font-weight: 700; 
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.content-heading h4,
+h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.content-heading h5,
+h5 {
+    font-size: 1rem; 
+    font-weight: 500; 
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.content-heading h6,
+h6 {
+    font-size: 0.75rem;
+    font-weight: 500; 
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+/* Paragraphs */
+.content-paragraph p {
+    font-size: 1rem; 
+    color: #4a5568; 
+    margin-bottom: 1.5rem;
+    line-height: 1.75;
+}
+
+/* Lists */
+.content-list ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem; 
+    color: #4a5568; 
+}
+
+.content-list li {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem; 
+    color: #4a5568; 
+}
+
+/* Links */
+.content-links a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
 </style>
 
 <script>

@@ -120,3 +120,38 @@ function custom_search_query($query) {
 }
 add_action('pre_get_posts', 'custom_search_query');
 
+// Handle contact form submission
+function handle_contact_form_submission() {
+    check_ajax_referer('submit-contact-form', 'security');
+
+    if (empty($_POST['name']) || empty($_POST['email']) || empty($_POST['message'])) {
+        wp_send_json_error(['message' => 'All fields are required.']);
+    }
+
+    $name = sanitize_text_field($_POST['name']);
+    $email = sanitize_email($_POST['email']);
+    $message = sanitize_textarea_field($_POST['message']);
+
+    // Save the submission to the database (optional)
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'contact_form_submissions';
+
+    $result = $wpdb->insert(
+        $table_name,
+        [
+            'name' => $name,
+            'email' => $email,
+            'message' => $message,
+            'time' => current_time('mysql'),
+        ],
+        ['%s', '%s', '%s', '%s']
+    );
+
+    if ($result) {
+        wp_send_json_success(['message' => 'Your message has been sent successfully.']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to submit your message. Please try again.']);
+    }
+}
+add_action('wp_ajax_submit_contact_form', 'handle_contact_form_submission');
+add_action('wp_ajax_nopriv_submit_contact_form', 'handle_contact_form_submission');
