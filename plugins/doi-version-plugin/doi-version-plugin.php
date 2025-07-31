@@ -89,10 +89,13 @@ class DOI_Version_Plugin {
     }
 
     public function add_rewrite_rules() {
-        if (is_admin() || is_preview()) {
-            return; 
-        }
         add_rewrite_rule('([^/]+)/release/([0-9]+)/?$', 'index.php?name=$matches[1]&version=$matches[2]', 'top');
+        
+        // Force flush if this is the first time
+        if (!get_option('doi_version_rewrite_flushed')) {
+            flush_rewrite_rules();
+            update_option('doi_version_rewrite_flushed', true);
+        }
     }
 
     public function add_query_vars($vars) {
