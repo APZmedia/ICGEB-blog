@@ -53,9 +53,59 @@ class DOI_Version_Plugin {
         <p>
             <label><input type="checkbox" name="icgeb_faq_enabled" value="1" <?php checked($faq_enabled); ?> /> Enable FAQPage schema for this content</label>
         </p>
-        <p><label for="icgeb_faq_json"><strong>FAQ entries (JSON array)</strong></label></p>
-        <textarea id="icgeb_faq_json" name="icgeb_faq_json" rows="10" style="width:100%;font-family:monospace;"><?php echo esc_textarea(wp_json_encode($faq_items, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?></textarea>
-        <p class="description">Use format: [{"question":"...","answer":"..."}]. Empty or invalid rows are ignored in output.</p>
+        <div id="icgeb-faq-rows" style="display:flex;flex-direction:column;gap:10px;">
+            <?php foreach ($faq_items as $index => $item) : ?>
+                <div class="icgeb-faq-row" style="border:1px solid #ddd;padding:10px;background:#fff;">
+                    <p style="margin:0 0 8px 0;"><strong>FAQ <?php echo esc_html((string) ($index + 1)); ?></strong></p>
+                    <p style="margin:0 0 8px 0;">
+                        <label>Question</label>
+                        <input type="text" name="icgeb_faq_question[]" value="<?php echo esc_attr(isset($item['question']) ? $item['question'] : ''); ?>" style="width:100%;" />
+                    </p>
+                    <p style="margin:0 0 8px 0;">
+                        <label>Answer</label>
+                        <textarea name="icgeb_faq_answer[]" rows="3" style="width:100%;"><?php echo esc_textarea(isset($item['answer']) ? $item['answer'] : ''); ?></textarea>
+                    </p>
+                    <p style="margin:0;"><button type="button" class="button icgeb-remove-faq-row">Remove</button></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <p style="margin-top:10px;"><button type="button" id="icgeb-add-faq-row" class="button button-secondary">Add FAQ row</button></p>
+        <p class="description">FAQPage schema is emitted only when enabled and at least one valid question/answer pair exists.</p>
+        <script>
+            (function() {
+                var container = document.getElementById('icgeb-faq-rows');
+                var addButton = document.getElementById('icgeb-add-faq-row');
+
+                function bindRemoveButtons(root) {
+                    var buttons = root.querySelectorAll('.icgeb-remove-faq-row');
+                    for (var i = 0; i < buttons.length; i++) {
+                        buttons[i].addEventListener('click', function() {
+                            var row = this.closest('.icgeb-faq-row');
+                            if (row) {
+                                row.remove();
+                            }
+                        });
+                    }
+                }
+
+                addButton.addEventListener('click', function() {
+                    var row = document.createElement('div');
+                    row.className = 'icgeb-faq-row';
+                    row.style.border = '1px solid #ddd';
+                    row.style.padding = '10px';
+                    row.style.background = '#fff';
+                    row.innerHTML =
+                        '<p style="margin:0 0 8px 0;"><strong>FAQ</strong></p>' +
+                        '<p style="margin:0 0 8px 0;"><label>Question</label><input type="text" name="icgeb_faq_question[]" value="" style="width:100%;" /></p>' +
+                        '<p style="margin:0 0 8px 0;"><label>Answer</label><textarea name="icgeb_faq_answer[]" rows="3" style="width:100%;"></textarea></p>' +
+                        '<p style="margin:0;"><button type="button" class="button icgeb-remove-faq-row">Remove</button></p>';
+                    container.appendChild(row);
+                    bindRemoveButtons(row);
+                });
+
+                bindRemoveButtons(document);
+            })();
+        </script>
         <?php
     }
 
@@ -71,20 +121,34 @@ class DOI_Version_Plugin {
         }
 
         update_post_meta($post_id, 'icgeb_faq_enabled', isset($_POST['icgeb_faq_enabled']) ? '1' : '0');
-        $raw_json = isset($_POST['icgeb_faq_json']) ? wp_unslash($_POST['icgeb_faq_json']) : '';
-        $decoded = json_decode($raw_json, true);
-        if (!is_array($decoded)) {
-            update_post_meta($post_id, 'icgeb_faq_items', array());
+        $validated_items = array();
+        $questions = isset($_POST['icgeb_faq_question']) && is_array($_POST['icgeb_faq_question']) ? wp_unslash($_POST['icgeb_faq_question']) : array();
+        $answers = isset($_POST['icgeb_faq_answer']) && is_array($_POST['icgeb_faq_answer']) ? wp_unslash($_POST['icgeb_faq_answer']) : array();
+
+        if (empty($questions) && empty($answers) && isset($_POST['icgeb_faq_json'])) {
+            $raw_json = wp_unslash($_POST['icgeb_faq_json']);
+            $decoded = json_decode($raw_json, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $item) {
+                    if (!is_array($item)) {
+                        continue;
+                    }
+                    $question = isset($item['question']) ? trim(wp_strip_all_tags((string) $item['question'])) : '';
+                    $answer = isset($item['answer']) ? trim(wp_kses_post((string) $item['answer'])) : '';
+                    if ($question === '' || $answer === '') {
+                        continue;
+                    }
+                    $validated_items[] = array('question' => $question, 'answer' => $answer);
+                }
+            }
+            update_post_meta($post_id, 'icgeb_faq_items', $validated_items);
             return;
         }
 
-        $validated_items = array();
-        foreach ($decoded as $item) {
-            if (!is_array($item)) {
-                continue;
-            }
-            $question = isset($item['question']) ? trim(wp_strip_all_tags((string) $item['question'])) : '';
-            $answer = isset($item['answer']) ? trim(wp_kses_post((string) $item['answer'])) : '';
+        $max = max(count($questions), count($answers));
+        for ($i = 0; $i < $max; $i++) {
+            $question = isset($questions[$i]) ? trim(wp_strip_all_tags((string) $questions[$i])) : '';
+            $answer = isset($answers[$i]) ? trim(wp_kses_post((string) $answers[$i])) : '';
             if ($question === '' || $answer === '') {
                 continue;
             }

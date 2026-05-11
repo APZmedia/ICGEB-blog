@@ -226,6 +226,55 @@ add_action('wp_ajax_submit_contact_form', 'icgeb_handle_contact_form_submission'
 // Hook for non-logged-in users
 add_action('wp_ajax_nopriv_submit_contact_form', 'icgeb_handle_contact_form_submission');
 
+function icgeb_output_schema_homepage() {
+    if (!is_front_page()) {
+        return;
+    }
+
+    $site_url = home_url('/');
+    $search_url_template = $site_url . '?s={search_term_string}';
+
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@graph' => array(
+            array(
+                '@type' => 'ResearchOrganization',
+                '@id' => $site_url . '#organization',
+                'name' => 'ICGEB Regulatory Science Group',
+                'url' => $site_url,
+                'sameAs' => array('https://www.icgeb.org'),
+                'contactPoint' => array(
+                    '@type' => 'ContactPoint',
+                    'url' => home_url('/contact/'),
+                    'contactType' => 'general',
+                ),
+                'funder' => array(
+                    '@type' => 'Organization',
+                    'name' => 'Coefficient Giving',
+                    'url' => 'https://coefficientgiving.org/',
+                ),
+            ),
+            array(
+                '@type' => 'WebSite',
+                '@id' => $site_url . '#website',
+                'name' => get_bloginfo('name'),
+                'url' => $site_url,
+                'potentialAction' => array(
+                    '@type' => 'SearchAction',
+                    'target' => array(
+                        '@type' => 'EntryPoint',
+                        'urlTemplate' => $search_url_template,
+                    ),
+                    'query-input' => 'required name=search_term_string',
+                ),
+            ),
+        ),
+    );
+
+    echo "\n<script type=\"application/ld+json\">" . wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) . "</script>\n";
+}
+add_action('wp_head', 'icgeb_output_schema_homepage', 20);
+
 /**
  * IMPORTANT: One-time action after theme activation or when rewrite rules are added/changed.
  * It's generally better to hook this to theme activation.
