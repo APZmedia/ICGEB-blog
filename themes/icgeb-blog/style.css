@@ -1,3 +1,26 @@
+/* Define custom theme colors as CSS variables for easy management. */
+/* Place this at the top of your CSS or in a :root selector if you prefer. */
+:root {
+  --icgeb-blue: #005689; /* Example: Replace with your actual ICGEB blue */
+  --icgeb-hover: #007bff; /* Example: Replace with your actual ICGEB hover color */
+
+  /* Common Grays (approximating Tailwind for consistency) */
+  --color-gray-100: #f3f4f6;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563; /* Added for dark mode hover if needed */
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+
+  /* Common Blues (approximating Tailwind for consistency) */
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+}
+
+
+/* === YOUR EXISTING CSS === */
+
 /* Ensure menu items are displayed inline */
 .menu-item {
     display: inline-block;
@@ -6,23 +29,26 @@
 /* Override any default WordPress styles that might interfere */
 #primary-menu {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+    /* flex-direction: row; /* Default, optional */
+    /* justify-content: flex-start; /* Default, optional */
     list-style-type: none;
     padding: 0;
     margin: 0;
+    /* Consider using gap for spacing if preferred and browser support is fine: */
+    /* gap: 2rem; */
 }
 
 #primary-menu li {
     margin-right: 2rem;
 }
 
+/* Remove margin from the last item if not using gap */
 #primary-menu li:last-child {
     margin-right: 0;
 }
 
 .prose {
-    max-width: none;
+    max-width: none; /* Ensure this is the desired behavior for readability */
 }
 
 .prose p {
@@ -33,3 +59,117 @@
 .prose p:first-of-type {
     margin-top: 0;
 }
+
+/* === PAGINATION STYLES === */
+
+/* Container for pagination (if you have one, like the "mt-12 text-center" div) */
+/* You might not need a specific class if the parent div styling is sufficient. */
+/* For example:
+.your-pagination-wrapper-class {
+    margin-top: 3rem;
+    text-align: center;
+}
+*/
+
+/* The main pagination list */
+ul.page-numbers {
+  display: flex;
+  justify-content: center; /* Centers the pagination items */
+  align-items: center;    /* Vertically aligns items if they have different heights */
+  list-style-type: none;
+  padding: 0;
+  margin: 2rem 0 0 0; /* Adds some top margin to separate from content, adjust as needed */
+}
+
+/* Individual list items housing each page number/link */
+ul.page-numbers li {
+  margin: 0 0.25rem; /* Small horizontal gap between items */
+}
+
+/* Style for each page number link or span */
+.page-numbers {
+  display: inline-block;
+  padding: 0.5rem 0.9rem; /* Adjust padding for size */
+  min-width: 2.25rem;     /* Ensure a minimum width for a nice circular/square shape */
+  text-align: center;
+  line-height: 1.25;
+  color: var(--color-gray-500);
+  background-color: #ffffff;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 0.25rem; /* Slightly rounded corners */
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* Hover state for page numbers */
+.page-numbers:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-400);
+}
+
+/* Style for the current (active) page number */
+.page-numbers.current {
+  z-index: 2; /* Ensure it's "on top" if there were any weird overlaps */
+  color: #ffffff; /* White text for better contrast on blue */
+  background-color: var(--icgeb-blue);
+  border-color: var(--icgeb-blue);
+  font-weight: bold;
+}
+
+/* Hover state for the current page (optional, could be no change or subtle) */
+.page-numbers.current:hover {
+  background-color: var(--icgeb-hover);
+  border-color: var(--icgeb-hover);
+  color: #ffffff;
+}
+
+/* Styling for "Next" and "Previous" text if they are just text and not symbols */
+/* WordPress often uses « and » which are fine as is. */
+/* If you have .prev and .next classes specifically:
+.page-numbers.prev,
+.page-numbers.next {
+    font-weight: normal; // Example
+}
+*/
+
+/* Screen reader text - visually hide but keep accessible */
+.screen-reader-text {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+}
+
+
+/* Optional: Dark Mode Styles (Uncomment and adjust if your theme supports dark mode) */
+/*
+@media (prefers-color-scheme: dark) {
+  .page-numbers {
+    background-color: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+    color: var(--color-gray-400);
+  }
+
+  .page-numbers:hover {
+    background-color: var(--color-gray-700);
+    color: #ffffff;
+  }
+
+  .page-numbers.current {
+    color: #ffffff;
+    background-color: var(--icgeb-blue); // Or a slightly different shade for dark mode
+    border-color: var(--icgeb-blue);
+  }
+
+   .page-numbers.current:hover {
+      background-color: var(--icgeb-hover);
+      border-color: var(--icgeb-hover);
+   }
+}
+*/

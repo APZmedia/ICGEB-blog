@@ -14,15 +14,15 @@ get_header();
 
         <form role="search" method="get" class="search-form mb-8 mt-10" action="<?php echo esc_url(home_url('/')); ?>">
             <div class="flex">
-                <input 
-                    type="search" 
-                    class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                    placeholder="Search..." 
-                    value="<?php echo get_search_query(); ?>" 
-                    name="s" 
+                <input
+                    type="search"
+                    class="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Search..."
+                    value="<?php echo get_search_query(); ?>"
+                    name="s"
                 />
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 ml-2"
                 >
                     Search
@@ -33,7 +33,7 @@ get_header();
         <?php
         // Determine if the user is actively searching
         $search_query = get_search_query();
-        $is_active_search = isset($_GET['s']);
+        $is_active_search = isset($_GET['s']); // Check if 's' parameter is present
 
         if (!$is_active_search || $search_query === '') : ?>
             <p class="text-center text-gray-700">Enter a term to start searching.</p>
@@ -43,7 +43,7 @@ get_header();
                     <article id="post-<?php the_ID(); ?>" <?php post_class('bg-white rounded-lg shadow-md overflow-hidden'); ?>>
                         <?php if (has_post_thumbnail()) : ?>
                             <div class="aspect-w-16 aspect-h-9">
-                                <?php the_post_thumbnail('medium', ['class' => 'object-cover w-full h-full']); ?>
+                                <?php the_post_thumbnail('medium', ['class' => 'object-cover w-full h-full', 'alt' => icgeb_get_featured_image_alt(get_the_ID())]); ?>
                             </div>
                         <?php endif; ?>
                         <div class="p-4">
@@ -74,14 +74,18 @@ get_header();
                     </article>
                 <?php endwhile; ?>
             </div>
-            <?php the_posts_pagination(array(
-                'mid_size' => 2,
-                'prev_text' => __('Previous', 'your-theme-text-domain'),
-                'next_text' => __('Next', 'your-theme-text-domain'),
-                'class' => 'mt-8',
-            )); ?>
+            <?php
+            // Use the_posts_pagination for the main query on search results
+            the_posts_pagination(array(
+                'mid_size'  => 2,
+                'prev_text' => __('« Previous', 'icgeb-theme'), // Use your theme's text domain
+                'next_text' => __('Next »', 'icgeb-theme'),   // Use your theme's text domain
+                // 'class'     => 'mt-8', // 'class' is not a standard arg here. Styling is via ul.page-numbers.
+                'screen_reader_text' => __('Search results navigation', 'icgeb-theme')
+            ));
+            ?>
         <?php elseif ($is_active_search) : ?>
-            <p class="text-center text-gray-700">No results found. Try another search term.</p>
+            <p class="text-center text-gray-700">No results found for "<?php echo esc_html($search_query); ?>". Try another search term.</p>
         <?php endif; ?>
     </main>
 

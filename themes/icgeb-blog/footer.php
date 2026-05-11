@@ -17,7 +17,7 @@
                         </p>
                         <img 
                             src="<?php echo esc_url(get_template_directory_uri() . '/ICGEB-white-logo.png'); ?>" 
-                            alt="Monitoring Gene Drive Research Logo" 
+                            alt="ICGEB white logo" 
                             class="h-auto w-80"
                         />
                     </div>
@@ -29,7 +29,7 @@
                         </p>
                         <img 
                             src="<?php echo esc_url(get_template_directory_uri() . '/OP_GrayLogo+BlackType.png'); ?>" 
-                            alt="Open Philanthropy Logo" 
+                            alt="Open Philanthropy logo" 
                             class="h-auto w-28"
                         />
                     </div>

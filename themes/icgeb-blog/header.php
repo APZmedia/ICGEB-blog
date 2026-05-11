@@ -30,7 +30,7 @@
             <div class="flex items-center space-x-4">
                 <img 
                     src="<?php echo esc_url(get_template_directory_uri() . '/monitoring_gen_drive_research._vactor_file_for_web2.png'); ?>" 
-                    alt="Monitoring Gene Drive Research Logo" 
+                    alt="Monitoring Gene Drives site logo" 
                     class="object-cover
                     <?php if (is_front_page() || is_home()) : ?> 
                         h-[100px] w-[100px] md:h-[250px] md:w-[250px]
