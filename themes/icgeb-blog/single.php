@@ -5,8 +5,8 @@ function get_current_version($post_id) {
     $current_version = get_post_meta($post_id, 'version', true);
     $version_history = get_post_meta($post_id, 'version_history', true);
 
-    if ($requested_version && is_array($version_history) && isset($version_history['v' . $requested_version])) {
-        return 'v' . $requested_version;
+    if ($requested_version && is_array($version_history) && isset($version_history[$requested_version])) {
+        return $requested_version;
     }
 
     return $current_version;
@@ -36,7 +36,7 @@ get_header();
                     get_the_date('Y'),
                     get_the_title(),
                     $doi,
-                    trailingslashit(get_permalink()) . 'release/' . ltrim($current_version, 'v') . '/'
+                    trailingslashit(get_permalink()) . 'release/' . $current_version . '/'
                 );
             ?>
                 <div id="mainContent">
@@ -115,11 +115,11 @@ get_header();
                                             $version_history = get_post_meta(get_the_ID(), 'version_history', true);
                                             if ($version_history && is_array($version_history)) {
                                                 foreach (array_keys($version_history) as $version) {
-                                                    $version_number = ltrim($version, 'v'); // Remove 'v' for display
+                                                    // Plugin stores versions as plain numbers (1, 2, 3)
                                                     echo sprintf(
                                                         '<a href="%s" class="version-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-version="%s">%s</a>',
-                                                        esc_url(add_query_arg('version', $version_number, get_permalink())),
-                                                        esc_attr($version), // Keep the 'v' prefix for data-version
+                                                        esc_url(add_query_arg('version', $version, get_permalink())),
+                                                        esc_attr($version),
                                                         esc_html($version)
                                                     );
                                                 }
@@ -399,10 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.version-item').forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            let version = item.dataset.version;
-            if (!version.startsWith('v')) {
-                version = 'v' + version; // Ensure the version key starts with 'v'
-            }
+            const version = item.dataset.version;
             fetchVersionContent(version);
             versionList.classList.add('hidden');
         });
@@ -440,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update URL
     function updateUrl(version) {
         const baseUrl = window.location.pathname.split('/release/')[0];
-        const newUrl = `${baseUrl}/release/${version.replace('v', '')}/`;
+        const newUrl = `${baseUrl}/release/${version}/`;
         window.history.pushState({ version: version }, '', newUrl);
     }
 
