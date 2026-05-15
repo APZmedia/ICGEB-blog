@@ -217,6 +217,8 @@ class DOI_Version_Plugin {
 
     public function add_rewrite_rules() {
         add_rewrite_rule('([^/]+)/release/([0-9]+)/?$', 'index.php?name=$matches[1]&version=$matches[2]', 'top');
+        // Also match /release/v{n}/ and redirect to canonical /release/{n}/
+        add_rewrite_rule('([^/]+)/release/v([0-9]+)/?$', 'index.php?name=$matches[1]&version=v$matches[2]', 'top');
         
         // Force flush if this is the first time
         if (!get_option('doi_version_rewrite_flushed')) {
@@ -236,10 +238,18 @@ class DOI_Version_Plugin {
         }
         if (is_single() && get_post_type() === 'post') {
             $version = get_query_var('version', false);
+            
+            // Redirect /release/v{n}/ to canonical /release/{n}/
+            if ($version && preg_match('/^v([0-9]+)$/i', $version, $matches)) {
+                $canonical_url = trailingslashit(get_permalink()) . 'release/' . $matches[1] . '/';
+                wp_redirect($canonical_url, 301);
+                exit;
+            }
+            
             if ($version === false) {
                 $post_id = get_the_ID();
                 $latest_version = get_post_meta($post_id, 'version', true);
-                wp_redirect(trailingslashit(get_permalink($post_id)) . 'release/' . ltrim($latest_version, 'v') . '/');
+                wp_redirect(trailingslashit(get_permalink($post_id)) . 'release/' . $latest_version . '/');
                 exit;
             }
         }
